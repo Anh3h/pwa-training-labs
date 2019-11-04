@@ -18,35 +18,64 @@ limitations under the License.
 const app = (() => {
 
   function getImageName(country) {
-
-    // create and return a promise
-
+    country = country.toLowerCase();
+    const promiseOfImageName = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if(country === 'spain' || country === 'chile' || country === 'peru') {
+          resolve(country + '.png')
+        } else {
+          reject(Error('Didn\'t receive a valid country name:' ))
+        }
+      }, 1000)
+    })
+    console.log(promiseOfImageName);
+    return promiseOfImageName;
   }
 
   function isSpain(country) {
-
-    // Optional - create and return a promise that resolves if input is "Spain"
-
+    country = country.toLowerCase();
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (country === 'spain')
+          resolve();
+        else
+          reject();
+      }, 1000)
+    });
   }
 
   function flagChain(country) {
-
-    // use the promise
-
+    return getImageName(country)
+      .catch(fallbackName)
+      .then(fetchFlag)
+      .then(processFlag)
+      .then(appendFlag)
+      .catch(logError);
   }
 
   function allFlags(promiseList) {
-
-    // use promise.all
-
+    return Promise.all(promiseList)
   }
 
+  var promises = [
+    getImageName('Spain'),
+    getImageName('Chile'),
+    getImageName('Peru')
+  ];
 
-  // call the allFlags function
+  allFlags(promises).then(function(result) {
+    console.log(result);
+  });
 
-
-  // use Promise.race
-
+  const promise1 = new Promise((resolve, reject) => {
+    setTimeout(resolve, 500, 'one')
+  });
+  const promise2 = new Promise((resolve, reject) => {
+    setTimeout(reject, 100, 'two')
+  });
+  Promise.race([promise1, promise2])
+    .then(logSuccess)
+    .catch(logError);
 
   /* Helper functions */
 
