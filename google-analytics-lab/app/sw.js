@@ -13,16 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/3.4.1/workbox-sw.js');
+import('js/analytics-helper.js');
 
-// TODO Import the helper script
-
-// TODO Add offline analytics script
+workbox.googleAnalytics.initialize();
 
 self.addEventListener('notificationclose', function(e) {
   var notification = e.notification;
   var primaryKey = notification.data.primaryKey;
   console.log('Closed notification: ' + primaryKey);
-  // TODO Send notification close event
+  e.waitUntil(
+    sendAnalyticsEvent('close', 'notification')
+  )
 });
 
 self.addEventListener('notificationclick', function(e) {
@@ -32,7 +34,9 @@ self.addEventListener('notificationclick', function(e) {
   e.waitUntil(
     Promise.all([
       clients.openWindow('pages/page' + primaryKey + '.html'),
-      // TODO Send notification click event
+      e.waitUntil(
+        sendAnalyticsEvent('click', 'notification')
+      )
     ])
   );
 });
@@ -49,7 +53,9 @@ self.addEventListener('push', function(e) {
   };
   e.waitUntil(Promise.all([
       self.registration.showNotification('Hello world!', options),
-      // TODO Send push recieved event
+      e.waitUntil(
+        sendAnalyticsEvent('recived', 'push')
+      )
     ])
   );
 });
