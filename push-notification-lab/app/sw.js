@@ -14,8 +14,72 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// TODO 2.6 - Handle the notificationclose event
+self.addEventListener('notificationclose', event => {
+    const notification = event.notification;
+    const primaryKey = notification.data.primaryKey;
 
-// TODO 2.7 - Handle the notificationclick event
+    console.log("Closed notification: ", primaryKey);
+});
 
-// TODO 3.1 - add push event listener
+self.addEventListener('notificationclick', event => {
+    const notification = event.notification;
+    const primaryKey = notification.data.primaryKey;
+    const action = event.action;
+
+    if (action === 'close') {
+        self.registration.getNotifications().then(notifications => {
+            notifications.forEach(notification => notification.close());
+        });
+    } else {
+        clients.matchAll().then(clients => {
+            const client = clients.find(client => {
+                return client;
+            })
+            if(client !== undefined) {
+                client.navigate('samples/page' + primaryKey + '.html');
+                client.focus();
+            } else {
+                //There are no visible windows. Open one.
+                clients.openWindow('samples/page' + primaryKey + '.html');
+                notification.close();
+            }
+        })
+        notification.close();
+    }
+
+})
+
+self.addEventListener('push', event => {
+    let body;
+
+    if(event.data) {
+        body = event.data.text();
+    } else {
+        body = 'Default body'
+    }
+    const options = {
+        body: body,
+        icon: 'images/notification-flat.png',
+        vibrate: [100, 50, 100],
+        data: {
+            dateofArrival: Date.now(),
+            primaryKey: 1
+        },
+        actions: [
+            { action: 'explore', title: 'Go to the site', icon: 'images/checkmark.png' },
+            { action: 'close', title: 'Close the notification', icons: 'images/xmark.png' }
+        ]
+    };
+
+    event.waitUntil(
+        clients.matchAll().then((c) => {
+            console.log(c);
+            if(c.length === 0) {
+                self.registration.showNotification('Push Notification', options)
+            } else {
+                // Send a message to the page to update the UI
+                console.log('Application is already open!');
+            }
+        })
+    )
+})

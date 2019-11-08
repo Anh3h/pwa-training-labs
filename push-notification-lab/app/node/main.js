@@ -14,4 +14,29 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// TODO 3.8 - push a message using the web push library
+const webPush = require('web-push');
+
+const pushSubscription = {
+    "endpoint":"https://fcm.googleapis.com/fcm/send/dhlOzl8tnPE:APA91bHOSLdcIVxWwt7vM4f5x_S7m9VIPB0O8o1p2itH-4Ny8KyGc_rRwq7qC9MRTlxtX2j2NIPLFFdWkWpW_BuRGxBRqvWyPCS6CKIMXP92eb9Pn45y9lhdxJfe1_eZ5HgPOg9G-dVq","expirationTime":null,"keys":{"p256dh":"BI6ThzyFbWvPxEYLvfxJ4nAq_1290WAEUIEkgcZJ8yB4GFugj10IcljxFAoneTyjUfwjM63vgBfhuArtsn9Kni0","auth":"dnrx2Gsrl75gjlYIdCqpjw"}
+};
+
+const vapidPublicKey = 'BA3F-sCBM7Hfk9IGGxIVP0j5m7CVykL6Jk3RFIGDOnK1tmbfCpmyAM9Uq5HYargd0BwXJIpAVkm6sqI-gXZeB30';
+const vapidPrivateKey = '6gGxAF8zCd1ymaJ7L03jP6YGDM--BKTt1HssfH9Pigs';
+
+const payload = 'Here is my payload';
+
+const options = {
+    // gcmAPIKey: '871147752247',
+    TTL: 60,
+    vapidDetails: {
+        subject: 'mailto: courageangeh@gmail.com',
+        publicKey: vapidPublicKey,
+        privateKey: vapidPrivateKey
+    }
+};
+
+webPush.sendNotification(
+    pushSubscription,
+    payload,
+    options
+);
