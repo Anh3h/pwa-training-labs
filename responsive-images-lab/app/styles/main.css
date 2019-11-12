@@ -34,9 +34,17 @@ body {
 
 /* TODO 2 - set the image max-width */
 
-/* TODO 4.1 - display the SFO image at 50vw */
+img#sfo {
+  transition: width 0.5s;
+  max-width: 50vw;
+}
 
-/* TODO 5.1 - add a media query */
+@media screen and (max-width: 700px) {
+  img#sfo {
+    max-width: 90vw;
+    width: 90vw;
+  }
+}
 
 figcaption {
   color: #bb021e;
@@ -67,4 +75,8 @@ p {
   margin: 0 auto 1em auto;
   text-align: justify;
   max-width: 50em;
+}
+
+img {
+  max-width: 100%;
 }
